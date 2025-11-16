@@ -1,52 +1,29 @@
-{% set has_zatca = frappe.db.exists("Sales Invoice Additional Fields", {"sales_invoice": doc.name}) %}
-{% set details = None %}
+{# --- تحديد نوع الفاتورة بناءً على buyer_vat_registration_number --- #}
+{% set invoice_type = "Simplified" %}
 
-{% if has_zatca %}
-    {% set siaf_data = frappe.db.get_value("Sales Invoice Additional Fields", 
-                                           {"sales_invoice": doc.name}, 
-                                           ["invoice_type_transaction", "invoice_counter", "uuid"], 
-                                           as_dict=1) %}
-    {% if siaf_data %}
-        {% set details = {"siaf": siaf_data} %}
+{% if doc.custom_zatca_siaf %}
+    {% set buyer_vat = frappe.db.get_value("Sales Invoice Additional Fields", doc.custom_zatca_siaf, "buyer_vat_registration_number") %}
+    {% if buyer_vat %}
+        {% set invoice_type = "Standard" %}
     {% endif %}
 {% endif %}
 
-{# --- تحديد عنوان الفاتورة --- #}{% if details and details.siaf and details.siaf.invoice_type_transaction %}
-    {# هذا الجزء يعمل فقط إذا كان هناك سجل ZATCA مرتبط #}
-
-    {% set invoice_type = "Simplified" %}
-    {% if (details.siaf.invoice_type_transaction)[:2] == '01' %}
-        {% set invoice_type = "Standard" %}
-    {% endif %}
-
-    {% if invoice_type == "Standard" %}
-        {% if doc.is_return %}
-            {% set invoice_title = "إشعار دائن ضريبي قياسي" %}
-        {% elif doc.is_debit_note %}
-            {% set invoice_title = "إشعار مدين ضريبي قياسي" %}
-        {% else %}
-            {% set invoice_title = "فاتورة ضريبية قياسية" %}
-        {% endif %}
-    {% else %} {#
-    invoice_type is "Simplified" #}
-        {% if doc.is_return %}
-            {% set invoice_title = "إشعار دائن ضريبي مبسط" %}
-        {% elif doc.is_debit_note %}
-            {% set invoice_title = "إشعار مدين ضريبي مبسط" %}
-        {% else %}
-            {% set invoice_title = "فاتورة ضريبية مبسطة" %}
-        {% endif %}
-    {% endif %}
-
-{% else %}
-    {# هذا هو الجزء الافتراضي الذي يعمل عند عدم وجود سجل ZATCA #}
+{# --- تحديد عنوان الفاتورة --- #}
+{% if invoice_type == "Standard" %}
     {% if doc.is_return %}
-        {% set invoice_title = "إشعار دائن ضريبي" %}
+        {% set invoice_title = "إشعار دائن ضريبي قياسي" %}
     {% elif doc.is_debit_note %}
-        {% set invoice_title = "إشعار مدين ضريبي" %}
+        {% set invoice_title = "إشعار مدين ضريبي قياسي" %}
     {% else %}
-        {# هذا هو طلبك الأساسي: العنوان الافتراضي #}
-        {% set invoice_title = "فاتورة ضريبية" %}
+        {% set invoice_title = "فاتورة ضريبية قياسية" %}
+    {% endif %}
+{% else %}
+    {% if doc.is_return %}
+        {% set invoice_title = "إشعار دائن ضريبي مبسط" %}
+    {% elif doc.is_debit_note %}
+        {% set invoice_title = "إشعار مدين ضريبي مبسط" %}
+    {% else %}
+        {% set invoice_title = "فاتورة ضريبية مبسطة" %}
     {% endif %}
 {% endif %}
 
