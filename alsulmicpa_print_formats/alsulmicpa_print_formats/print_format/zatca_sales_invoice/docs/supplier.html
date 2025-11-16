@@ -1,20 +1,22 @@
 <div style="margin: 5px 0; padding: 5px; background-color: #fafafa; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
     <!-- توسيط العنوان بمساحة صغيرة -->
-    <div style="display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; padding: 2px; margin-bottom: 2px; background-color: #e9ecef; border-radius: 4px;">
-        بيانات المشتري
+    <div style="display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; padding: 4px; margin-bottom: 2px; background-color: #e9ecef; border-radius: 4px;">
+        بيانات البائع
     </div>
 
     <table style="width: 100%; border-collapse: collapse; direction: rtl;">
         <tbody>
-
-            <!-- استخراج اسم المشتري -->
+            <!-- استخراج اسم البائع -->
+            {% set custom_company_arabic_name = frappe.db.get_value('Company', doc.company, 'custom_company_arabic_name') or '' %}
+            {% if custom_company_arabic_name %}
             <tr>
                 <th style="text-align: right; padding: 5px; border: 1px solid #ccc; background-color: #e9ecef; font-weight: bold;">الإسم</th>
-                <td style="text-align: center; padding: 5px; border: 1px solid #ccc;">{{ doc.customer_name }}</td>
+                <td style="text-align: center; padding: 5px; border: 1px solid #ccc;">{{ custom_company_arabic_name }}</td>
             </tr>
+            {% endif %}
 
-            <!-- استخراج رقم الهاتف -->
-            {% set address_name = frappe.db.get_value("Dynamic Link", {"link_doctype": "Customer", "link_name": doc.customer}, "parent") %}
+            <!-- استخراج الهاتف -->
+            {% set address_name = frappe.db.get_value("Dynamic Link", {"link_doctype": "Company", "link_name": doc.company}, "parent") %}
             {% set phone = frappe.db.get_value("Address", address_name, "phone") if address_name else "" %}
             {% if phone %}
             <tr>
@@ -23,12 +25,10 @@
             </tr>
             {% endif %}
 
-            <!-- استخراج عنوان المشتري -->
-            {% set address_name = frappe.db.get_value("Dynamic Link", {"link_doctype": "Customer", "link_name": doc.customer}, "parent") %}
+            <!-- استخراج عنوان البائع -->
+            {% set address_name = frappe.db.get_value("Dynamic Link", {"link_doctype": "Company", "link_name": doc.company}, "parent") %}
             {% set address_line1, city, pincode = frappe.db.get_value("Address", address_name, ["address_line1", "city", "pincode"]) if address_name else ("", "", "") %}
             {% if address_line1 or city or pincode %}
-
-            <!-- عرض عنوان المشتري -->
             <tr>
                 <th style="text-align: right; padding: 5px; border: 1px solid #ccc; background-color: #e9ecef; font-weight: bold;">العنوان</th>
                 <td style="text-align: center; padding: 5px; border: 1px solid #ccc;">
@@ -40,20 +40,20 @@
             {% endif %}
 
             <!-- الرقم الضريبي -->
-            {% set custom_vat_registration_number = frappe.db.get_value('Customer', doc.customer, 'custom_vat_registration_number') or '' %}
-            {% if custom_vat_registration_number %}
+            {% set tax_id = frappe.db.get_value('Company', doc.company, 'tax_id') or '' %}
+            {% if tax_id %}
             <tr>
                 <th style="text-align: right; padding: 5px; border: 1px solid #ccc; background-color: #e9ecef; font-weight: bold;">الرقم الضريبي</th>
-                <td style="text-align: center; padding: 5px; border: 1px solid #ccc;">{{ custom_vat_registration_number }}</td>
+                <td style="text-align: center; padding: 5px; border: 1px solid #ccc;">{{ tax_id }}</td>
             </tr>
             {% endif %}
 
             <!-- السجل التجاري -->
-            {% set customer_commercial_reg_no = frappe.db.get_value("Additional Buyer IDs", {"parent": doc.customer, "type_name": "Commercial Registration Number"}, "value") %}
-            {% if customer_commercial_reg_no %}
+            {% set custom_commercial_registration_number = frappe.db.get_value('Company', doc.company, 'custom_commercial_registration_number') or '' %}
+            {% if custom_commercial_registration_number %}
             <tr>
                 <th style="text-align: right; padding: 5px; border: 1px solid #ccc; background-color: #e9ecef; font-weight: bold;">السجل التجاري</th>
-                <td style="text-align: center; padding: 5px; border: 1px solid #ccc;">{{ customer_commercial_reg_no }}</td>
+                <td style="text-align: center; padding: 5px; border: 1px solid #ccc;">{{ custom_commercial_registration_number }}</td>
             </tr>
             {% endif %}
         </tbody>
