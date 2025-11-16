@@ -1,0 +1,65 @@
+{% if doc.status %}
+
+    <!-- 🏷️ قسم ترجمة الحالات -->
+    {% set status_translation = {
+        "Draft": "مسودة",
+        "Return": "مرتجع",
+        "Credit Note Issued": "تم إصدار إشعار دائن",
+        "Submitted": "تم الإرسال",
+        "Paid": "مدفوع",
+        "Partly Paid": "مدفوع جزئياً",
+        "Unpaid": "غير مدفوع",
+        "Unpaid and Discounted": "غير مدفوع مع خصم",
+        "Partly Paid and Discounted": "مدفوع جزئياً مع خصم",
+        "Overdue and Discounted": "متأخر مع خصم",
+        "Overdue": "متأخر",
+        "Cancelled": "ملغي",
+        "Internal Transfer": "تحويل داخلي"
+    } %}
+
+    <!-- 🖍️ تخصيص التصميم بناءً على الحالة -->
+    {% set status_classes = {
+        "Paid": "stamp is-paid",
+        "Partly Paid": "stamp is-partly-paid",
+        "Unpaid": "stamp is-unpaid",
+        "Overdue": "stamp is-overdue",
+        "Cancelled": "stamp is-cancelled",
+        "Submitted": "stamp is-submitted",
+        "Draft": "stamp is-draft"
+    } %}
+
+    {% set translated_status = status_translation.get(doc.status, doc.status) %}
+    {% set status_class = status_classes.get(doc.status, "stamp") %}
+
+    <!-- 🏷️ عرض الختم -->
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: 15px;">
+        <span class="{{ status_class }}">{{ translated_status }}</span>
+    </div>
+
+    <!-- 🎨 الأسلوب الأساسي للختم مع حد مزدوج وميل بسيط -->
+    <style>
+        .stamp {
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 0.2rem double;
+            padding: 0.3rem 0.8rem;
+            text-transform: uppercase;
+            border-radius: 0.5rem;
+            font-family: 'Courier';
+            mix-blend-mode: multiply;
+            display: inline-block;
+            transform: rotate(-5deg);
+            position: relative;
+        }
+
+        /* ✅ تخصيص الألوان لكل حالة مع الحد المزدوج */
+        .is-paid { color: #0A9928; border-color: #0A9928; }      /* 🟢 مدفوع */
+        .is-partly-paid { color: #FFC107; border-color: #FFC107; } /* 🟡 مدفوع جزئياً */
+        .is-unpaid { color: #D23; border-color: #D23; }         /* 🔴 غير مدفوع */
+        .is-overdue { color: #D23; border-color: #D23; }        /* 🔴 متأخر */
+        .is-cancelled { color: #6C757D; border-color: #6C757D; } /* ⚪ ملغي */
+        .is-submitted { color: #007BFF; border-color: #007BFF; } /* 🔵 تم الإرسال */
+        .is-draft { color: #C4C4C4; border-color: #C4C4C4; }    /* ⚪ مسودة */
+    </style>
+
+{% endif %}

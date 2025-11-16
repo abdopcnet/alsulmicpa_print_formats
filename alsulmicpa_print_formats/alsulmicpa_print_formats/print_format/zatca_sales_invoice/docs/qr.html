@@ -1,0 +1,13 @@
+<div style="margin: 2px 0; width: 180px; height: 180px; float: right; display: flex; justify-content: center; align-items: center; border: 2px solid black; border-radius: 10px; overflow: hidden; background-color: #f9f9f9;">
+
+    {% if doc.custom_qr_code_image %}
+        <img src="{{ inv_additional_fields.qr_image_src }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+
+    {% else %}
+        <p style="color: red; font-weight: bold; text-align: center; padding: 5px; margin: 0;">
+            الرمز لم يتم إنشاءه
+        </p>
+
+    {% endif %}
+
+</div>

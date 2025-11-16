@@ -1,0 +1,80 @@
+{% set has_zatca = frappe.db.exists("Sales Invoice Additional Fields", {"sales_invoice": doc.name}) %}
+{% set details = None %}
+
+{% if has_zatca %}
+    {% set siaf_data = frappe.db.get_value("Sales Invoice Additional Fields", 
+                                           {"sales_invoice": doc.name}, 
+                                           ["invoice_type_transaction", "invoice_counter", "uuid"], 
+                                           as_dict=1) %}
+    {% if siaf_data %}
+        {% set details = {"siaf": siaf_data} %}
+    {% endif %}
+{% endif %}
+
+{# --- تحديد عنوان الفاتورة --- #}{% if details and details.siaf and details.siaf.invoice_type_transaction %}
+    {# هذا الجزء يعمل فقط إذا كان هناك سجل ZATCA مرتبط #}
+
+    {% set invoice_type = "Simplified" %}
+    {% if (details.siaf.invoice_type_transaction)[:2] == '01' %}
+        {% set invoice_type = "Standard" %}
+    {% endif %}
+
+    {% if invoice_type == "Standard" %}
+        {% if doc.is_return %}
+            {% set invoice_title = "إشعار دائن ضريبي قياسي" %}
+        {% elif doc.is_debit_note %}
+            {% set invoice_title = "إشعار مدين ضريبي قياسي" %}
+        {% else %}
+            {% set invoice_title = "فاتورة ضريبية قياسية" %}
+        {% endif %}
+    {% else %} {#
+    invoice_type is "Simplified" #}
+        {% if doc.is_return %}
+            {% set invoice_title = "إشعار دائن ضريبي مبسط" %}
+        {% elif doc.is_debit_note %}
+            {% set invoice_title = "إشعار مدين ضريبي مبسط" %}
+        {% else %}
+            {% set invoice_title = "فاتورة ضريبية مبسطة" %}
+        {% endif %}
+    {% endif %}
+
+{% else %}
+    {# هذا هو الجزء الافتراضي الذي يعمل عند عدم وجود سجل ZATCA #}
+    {% if doc.is_return %}
+        {% set invoice_title = "إشعار دائن ضريبي" %}
+    {% elif doc.is_debit_note %}
+        {% set invoice_title = "إشعار مدين ضريبي" %}
+    {% else %}
+        {# هذا هو طلبك الأساسي: العنوان الافتراضي #}
+        {% set invoice_title = "فاتورة ضريبية" %}
+    {% endif %}
+{% endif %}
+
+<!-- هيدر الفاتورة -->
+<div style="text-align: center; margin-bottom: 10px; position: relative;">
+    <h2 style="font-size: 2.5em; font-weight: bold; margin-top: 20px; color: #333;">{{ invoice_title }}</h2>
+
+    {% set branch_name = frappe.db.get_value("Branch", doc.branch, "name") %}
+    {% if branch_name %}
+        <span>
+            <span style="font-size: 16px; color: darkred; font-weight: bold; margin: 0; padding: 0;">الفرع :</span>
+            <span style="font-size: 16px; color: #777; margin: 0; padding: 0;">{{ branch_name }}</span>
+        </span>
+    {% endif %}
+
+    <!-- حاوية تحتوي على رقم الفاتورة على اليمين والتاريخ على اليسار -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+
+        <!-- رقم الفاتورة في أقصى اليمين -->
+        <div style="padding: 10px 15px; font-size: 14px; font-weight: bold; border: 2px solid #777; border-radius: 8px; background-color: #f9f9f9;">
+            {{ doc.name }} رقم الفاتورة
+        </div>
+
+        <!-- التاريخ في أقصى اليسار -->
+        <div style="padding: 10px 15px; font-size: 14px; font-weight: bold; border: 2px solid #777; border-radius: 8px; background-color: #f9f9f9;">
+            {{ doc.get_formatted("posting_date") }} تاريخ الفاتورة
+        </div>
+
+    </div>
+</div>
+
