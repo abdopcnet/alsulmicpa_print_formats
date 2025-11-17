@@ -4,28 +4,10 @@
     {% set created_by = frappe.db.get_value("User", doc.owner, "full_name") or doc.owner %}
 
     <!-- 🏷️ عرض ختم صغير للمستخدم -->
-    <div style="display: flex; justify-content: center; align-items: center; margin-top: 5px;">
-        <span class="small-stamp">تم الإنشاء بواسطة: {{ created_by }}</span>
+    <div style="width: 100%; text-align: right; margin-top: 8px; padding-right: 32px;">
+        <span style="font-size: 12px; font-weight: bold; border: 1.2px solid #1976d2; padding: 3px 10px; border-radius: 7px; font-family: 'Arial', sans-serif; background: #e3f0fb; color: #1976d2; display: inline-block; line-height: 1.3; text-align: center; letter-spacing: 0.5px;">
+            تم الإنشاء<br>{{ created_by }}
+        </span>
     </div>
-
-    <!-- 🎨 الأسلوب الأساسي للختم الصغير -->
-    <style>
-        .small-stamp {
-            font-size: 0.9rem; /* ✅ حجم أصغر */
-            font-weight: bold;
-            border: 0.12rem double #004080; /* ✅ حد مزدوج أزرق غامق */
-            padding: 3px 8px; /* ✅ تقليل الحشوة لتناسب النص فقط */
-            text-transform: uppercase;
-            border-radius: 5px;
-            font-family: 'Courier';
-            display: inline-block;
-            transform: rotate(-3deg); /* ✅ ميل بسيط */
-            background: rgba(0, 64, 128, 0.15); /* ✅ خلفية زرقاء شفافة */
-            color: #004080; /* ✅ لون النص أزرق غامق */
-            opacity: 0.85; /* ✅ شفافية خفيفة */
-            width: fit-content; /* ✅ يأخذ حجم النص فقط */
-            line-height: 1; /* ✅ تقليل المسافة العمودية داخل الختم */
-        }
-    </style>
 
 {% endif %}
