@@ -1,0 +1,57 @@
+<div>
+  <table style="width: 100%; border-collapse: collapse; direction: rtl; font-family: Arial, sans-serif; font-size: 14px; border: 1px solid #bbb; border-radius: 6px;">
+    <thead>
+      <tr>
+        <th style="background-color: #f5f5f5; font-weight: bold; font-size: 15px; padding: 6px 8px; border: 1px solid #bbb; border-top-right-radius: 6px; text-align: center; vertical-align: middle;" colspan="2">بيانات البائع</th>
+        <th style="background-color: #f5f5f5; font-weight: bold; font-size: 15px; padding: 6px 8px; border: 1px solid #bbb; border-top-left-radius: 6px; text-align: center; vertical-align: middle;" colspan="2">بيانات المشتري</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set company_name = doc.company %}
+      {% set company_data = frappe.get_doc("Company", company_name) %}
+      {% set company_ar_name = company_data.custom_company_arabic_name if company_data else "" %}
+      {% set company_cr_no = company_data.custom_commercial_registration_number if company_data else "" %}
+      {% set address_name_seller = frappe.db.get_value("Dynamic Link", {"link_doctype": "Company", "link_name": company_name}, "parent") %}
+      {% set address_line1_s, city_s, pincode_s = frappe.db.get_value("Address", address_name_seller, ["address_line1", "city", "pincode"]) if address_name_seller else ("", "", "") %}
+
+      {% set address_name_buyer = frappe.db.get_value("Dynamic Link", {"link_doctype": "Customer", "link_name": doc.customer}, "parent") %}
+      {% set address_line1_b, city_b, pincode_b = frappe.db.get_value("Address", address_name_buyer, ["address_line1", "city", "pincode"]) if address_name_buyer else ("", "", "") %}
+      {% set vat_no_buyer = frappe.db.get_value('Customer', doc.customer, 'custom_vat_registration_number') %}
+      {% set cr_no_buyer = frappe.db.get_value("Additional Buyer IDs", {"parent": doc.customer, "type_name": "Commercial Registration Number"}, "value") %}
+
+      <tr>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">اسم الشركة</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">{{ company_ar_name or "" }}</td>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">اسم الشركة</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">{{ doc.customer_name }}</td>
+      </tr>
+
+      <tr>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">العنوان</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">
+          {{ address_line1_s }}{% if city_s %}, {{ city_s }}{% endif %}{% if pincode_s %}, {{ pincode_s }}{% endif %}
+        </td>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">العنوان</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">
+          {{ address_line1_b }}{% if city_b %}, {{ city_b }}{% endif %}{% if pincode_b %}, {{ pincode_b }}{% endif %}
+        </td>
+      </tr>
+
+      <tr>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">الرقم الضريبي</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">{{ doc.company_tax_id or "" }}</td>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">الرقم الضريبي</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">{{ vat_no_buyer or "" }}</td>
+      </tr>
+
+      <tr>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle; border-bottom-right-radius: 6px;">السجل التجاري</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">{{ company_cr_no or "" }}</td>
+        <td style="width: 15%; background-color: #fff; font-weight: bold; font-size: 14px; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle;">السجل التجاري</td>
+        <td style="width: 35%; background-color: #fff; border: 1px solid #bbb; padding: 5px 7px; text-align: center; vertical-align: middle; border-bottom-left-radius: 6px;">{{ cr_no_buyer or "" }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
