@@ -1,32 +1,26 @@
-{% if doc.items %}
-<div style="margin: 5px 0; padding: 5px; background-color: #fafafa; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
-    <!-- توسيط العنوان بمساحة صغيرة -->
-    <div style="display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; padding: 2px; margin-bottom: 2px; background-color: #e9ecef; border-radius: 4px;">
-        جدول الأصناف
-    </div>
 
-    <table style="width: 100%; border-collapse: collapse; direction: rtl; overflow: hidden; line-height: 1.2;">
+{% if doc.items %}
+<div style="margin: 5px 0; padding: 5px; background-color: #fafafa; border: 1px solid #bbb; border-radius: 6px;">
+    <table style="width: 100%; border-collapse: collapse; direction: rtl; font-family: Arial, sans-serif; font-size: 13px;">
         <thead>
-            <tr style="background-color: #e9ecef; color: #000; font-weight: bold;">
-                <th style="width: 25px; text-align: center; padding: 6px; vertical-align: middle; border: 1px solid black;">م</th>
-                <th style="width: 75px; text-align: center; padding: 6px; vertical-align: middle; border: 1px solid black;">الكود</th>
-                <th style="width: 300px; text-align: center; padding: 6px; vertical-align: middle; border: 1px solid black;">الصنف</th>
-                <th style="width: 80px; text-align: center; padding: 6px; vertical-align: middle; border: 1px solid black;">الكمية</th>
-                <th style="width: 80px; text-align: center; padding: 6px; vertical-align: middle; border: 1px solid black;">الوحدة</th>
-                <th style="width: 80px; text-align: center; padding: 6px; vertical-align: middle; border: 1px solid black;">السعر</th>
-                <th style="width: 80px; text-align: center; padding: 6px; vertical-align: middle; border: 1px solid black;">المبلغ</th>
+            <tr style="background-color: #f5f5f5; color: #222; font-weight: bold;">
+                <th style="width: 25px; text-align: center; padding: 5px; vertical-align: middle; border: 1px solid #bbb;">م</th>
+                <th style="width: 300px; text-align: center; padding: 5px; vertical-align: middle; border: 1px solid #bbb;">الصنف</th>
+                <th style="width: 80px; text-align: center; padding: 5px; vertical-align: middle; border: 1px solid #bbb;">الكمية</th>
+                <th style="width: 80px; text-align: center; padding: 5px; vertical-align: middle; border: 1px solid #bbb;">الوحدة</th>
+                <th style="width: 80px; text-align: center; padding: 5px; vertical-align: middle; border: 1px solid #bbb;">السعر</th>
+                <th style="width: 80px; text-align: center; padding: 5px; vertical-align: middle; border: 1px solid #bbb;">المبلغ</th>
             </tr>
         </thead>
         <tbody>
             {%- for row in doc.items -%}
-            <tr style="font-size: 12px; text-align: center; border: 1px solid black;">
-                <td style="border: 1px solid black; padding: 5px;">{{ row.idx }}</td>
-                <td style="border: 1px solid black; padding: 5px;">{{ row.item_code }}</td>
-                <td style="border: 1px solid black; padding: 5px;">{{ row.description }}</td>
-                <td style="border: 1px solid black; padding: 5px;">{{ row.qty }}</td>
-                <td style="border: 1px solid black; padding: 5px;">{{ row.uom }}</td>
-                <td style="border: 1px solid black; padding: 5px;">{{ "%.2f"|format(row.rate|float) }}</td>
-                <td style="border: 1px solid black; padding: 5px;">{{ "%.2f"|format(row.amount|float) }}</td>
+            <tr style="font-size: 13px; text-align: center; border: 1px solid #bbb;">
+                <td style="border: 1px solid #bbb; padding: 4px;">{{ row.idx }}</td>
+                <td style="border: 1px solid #bbb; padding: 4px;">{{ row.description }}</td>
+                <td style="border: 1px solid #bbb; padding: 4px;">{{ row.qty }}</td>
+                <td style="border: 1px solid #bbb; padding: 4px;">{{ row.uom }}</td>
+                <td style="border: 1px solid #bbb; padding: 4px;">{{ "%.2f"|format(row.rate|float) }}</td>
+                <td style="border: 1px solid #bbb; padding: 4px;">{{ "%.2f"|format(row.amount|float) }}</td>
             </tr>
             {%- endfor -%}
         </tbody>
