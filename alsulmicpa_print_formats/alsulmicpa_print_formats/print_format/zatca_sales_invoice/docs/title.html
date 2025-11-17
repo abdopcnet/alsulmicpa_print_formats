@@ -7,35 +7,41 @@
     {% endif %}
 {% endif %}
 
-<div style="font-family: Arial, sans-serif;width:100%;max-width:100%;margin:0 auto;box-sizing:border-box;background:#fff;">
-  <div style="text-align:center;font-size:1.6em;font-weight:bold;color:#1e2d3a;margin:8px 0 16px 0;letter-spacing:1px;line-height:1.15;font-family:Cairo,Arial,sans-serif;width:100%;" class="invoice-title-block">
-    {% if invoice_type == "Standard" %}
-      {% if doc.is_return %}
-        <span class="auto-style1">إشعار دائن ضريبي قياسي</span>
-      {% elif doc.is_debit_note %}
-        <span class="auto-style1">إشعار مدين ضريبي قياسي</span>
-      {% else %}
-        <span class="auto-style1">فاتورة ضريبية قياسية</span>
-      {% endif %}
+{# --- تحديد عنوان الفاتورة --- #}
+{% if invoice_type == "Standard" %}
+    {% if doc.is_return %}
+        {% set invoice_title = "إشعار دائن ضريبي قياسي" %}
+    {% elif doc.is_debit_note %}
+        {% set invoice_title = "إشعار مدين ضريبي قياسي" %}
     {% else %}
-      {% if doc.is_return %}
-        <span class="auto-style1">إشعار دائن ضريبي مبسط</span>
-      {% elif doc.is_debit_note %}
-        <span class="auto-style1">إشعار مدين ضريبي مبسط</span>
-      {% else %}
-        <span class="auto-style1">فاتورة ضريبية مبسطة</span>
-      {% endif %}
+        {% set invoice_title = "فاتورة ضريبية قياسية" %}
     {% endif %}
-  </div>
+{% else %}
+    {% if doc.is_return %}
+        {% set invoice_title = "إشعار دائن ضريبي مبسط" %}
+    {% elif doc.is_debit_note %}
+        {% set invoice_title = "إشعار مدين ضريبي مبسط" %}
+    {% else %}
+        {% set invoice_title = "فاتورة ضريبية مبسطة" %}
+    {% endif %}
+{% endif %}
 
-  <div style="display:flex;justify-content:space-between;align-items:center;direction:rtl;padding:2px 20px 2px 20px;margin:0 auto 5px auto;line-height:1.2;width:100%;box-sizing:border-box;font-family:Cairo,Arial,sans-serif;">
-    <div style="flex:1;font-size:16px;font-weight:bold;color:#333;margin:0;padding:0;text-align:right;line-height:1.2;">
-      <span>رقم الفاتورة {{ doc.name }}</span>
-    </div>
-    <div style="flex:0 0 10px;"></div>
-    <div style="flex:1;font-size:16px;font-weight:bold;color:#333;margin:0;padding:0;text-align:left;line-height:1.2;">
-      <span>تاريخ الفاتورة {{ doc.get_formatted("posting_date") }}</span>
-    </div>
-  </div>
+<!-- هيدر الفاتورة متوافق مع PDF -->
+<div style="text-align: center; margin-bottom: 10px;">
+    <div style="font-size: 2.1em; font-weight: bold; margin-top: 18px; color: #222; font-family: Arial, sans-serif;">{{ invoice_title }}</div>
+    {% set branch_name = frappe.db.get_value("Cost Center", doc.cost_center, "cost_center_name") if doc.cost_center else "" %}
+    {% if branch_name %}
+        <div style="font-size: 15px; color: #444; margin: 4px 0; font-family: Arial, sans-serif;">الفرع: <span style="color: #777;">{{ branch_name }}</span></div>
+    {% endif %}
+    <table style="width: 100%; margin-top: 16px; border-collapse: collapse; font-family: Arial, sans-serif; direction: rtl;">
+        <tr>
+            <td style="width: 50%; text-align: center; font-size: 16px; font-weight: bold; border: 1px solid #bbb; padding: 8px;">
+                تاريخ الفاتورة: {{ doc.get_formatted('posting_date') }}
+            </td>
+            <td style="width: 50%; text-align: center; font-size: 16px; font-weight: bold; border: 1px solid #bbb; padding: 8px;">
+                رقم الفاتورة: {{ doc.name }}
+            </td>
+        </tr>
+    </table>
 </div>
 
